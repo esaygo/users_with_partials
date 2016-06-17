@@ -1,0 +1,44 @@
+<html>
+<body>
+  <head>
+    <title>Customize Users</title>
+    <script src="angular.js"></script>
+    <script src="angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+  </head>
+  <body>
+    <div ng-controller="customizeUsersController">
+
+      <h1>Users Controller</h1>
+        <form name="usersForm">
+          First Name:
+          <input type='text' name='first_name' ng-model='newUser.first_name' ng-minlength='3' placeholder="first name" required>
+          Last Name: <input type='text' ng-model='newUser.last_name' placeholder="last name">
+          Fav Language: <input type='text' ng-model='newUser.fav_language' placeholder="favourite language">
+          <input type='submit' value="Create User" ng-click='addUser()'>
+        </form>
+        <table border=1>
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Fav Language</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="user in users">
+              <td ng-bind="user.first_name"></td>
+              <td ng-bind="user.last_name"></td>
+              <td ng-bind="user.fav_language"></td>
+              <td><button ng-click='deleteUser(user)'>Delete User</button></td>
+            </tr>
+          <tbody>
+        </table>
+        <div ng-messages="usersForm.first_name.$error">
+          <p ng-message="minlength">The user's name is too short.</p>
+          <p ng-message="required">The user's name is required.</p>
+        </div>
+    </div> <!--end of customizeUsersController -->
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<html ng-app='myApp'>
+    <head>
+      <title>Angular Customizing Users with Partials</title>
+      <script src="angular.js"></script>
+      <script src="angular-route.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+      <script type='text/javascript'>
+
+      // Create a module
+        var myAppModule = angular.module('myApp', ['ngRoute', 'ngMessages']);
+
+        myAppModule.config(function($routeProvider) {
+          $routeProvider
+            .when('/',{
+              templateUrl: 'partials/customizeUsers.html'
+            })
+            .when('/usersList',{
+              templateUrl: 'partials/usersList.html'
+            })
+            .when('/customizeUsers', {
+              templateUrl: 'partials/customizeUsers.html'
+            })
+            .otherwise({
+              redirectTo: '/'
+            });
+        });
+        // Create a factory (attached to this module)
+        myAppModule.factory('userFactory', function (){
+
+          // The factory is nothing more than a function that returns an object
+          var users = [
+                    {first_name: 'Yukihiro',
+                    last_name: 'Matsumoto',
+                    fav_language: 'javascript'},
+
+                    {first_name: 'Ryan',
+                    last_name: 'Dhal',
+                    fav_language: 'ruby'},
+                  ];
+          var factory = {};
+          // Add a getStudents key to the factory object with a value of a function.
+          factory.getUsers = function (callback){
+              // Pass the students to a callback to be used by whoever calls the method
+              callback(users);
+          }
+          factory.addUser = function(newUser){
+            //console.log('new user in the factory', newUser);
+
+            users.push(newUser);
+            return users;
+          }
+          factory.deleteUser = function(user) {
+            users.splice(users.indexOf(user), 1);
+            return users;
+          }
+
+          // Most important step: return the object so it can be used by the rest of our angular code
+          return factory;
+        });
+        // Create a controller (attached to this module), and inject the studentFactory in it.
+        myAppModule.controller('customizeUsersController', function ($scope, userFactory){
+          console.log($scope);
+          //  initialize an empty array so $scope.products maintains a consistent data type
+          $scope.users = [];
+          // run the getProducts method and set $scope data in the callback
+          userFactory.getUsers(function (data){
+              $scope.users = data;
+          });
+          $scope.addUser = function() {
+            //console.log('new added user', $scope.newUser);
+            //console.log($scope.users);
+            // $scope.newProduct.quantity = 50;
+            // $scope.products.push($scope.newProduct);
+            // $scope.newProduct = {};
+            console.log("Eroare: " + $scope.usersForm.$error);
+            if($scope.usersForm.$error === null) {
+                userFactory.addUser($scope.newUser);
+                $scope.newUser = {};
+            } else {
+              console.log($scope.usersForm.$error);
+            }
+
+          }
+          $scope.deleteUser = function(user) {
+            // console.log("product to delete is: ", product);
+            // $scope.products.splice($scope.products.indexOf(product), 1);
+            userFactory.deleteUser(user);
+          }
+        });
+
+        myAppModule.controller('usersListController', function ($scope, userFactory){
+
+          //$scope.products = [];
+          userFactory.getUsers(function (data){
+              $scope.users = data;
+          });
+
+        });
+
+      </script>
+    </head>
+    <body>
+      <div ng-app='myApp'>
+        <a href='#/customizeUsers'>Customize Users</a> | <a href='#/usersList'>Users List</a>
+        <div ng-view="">
+        </div>
+      <div>
+    </body>
+</html>
